@@ -8,6 +8,11 @@ type User {
   products: [Product] #<--- This is relationship
 }
 
+type AuthData {
+  user: User
+  jwt: String
+}
+
 type Product {
   id: ID!
   name: String!
@@ -22,10 +27,12 @@ type Query {
   users: [User]!
   user_name(name: String!): User
 
-  products:[Product]!
+  products: [Product]!
 }
 
 type Mutation {
+  login(username: String!, password: String!): AuthData
+
   signup(
     name: String!
     username: String!
@@ -37,11 +44,7 @@ type Mutation {
 
   deleteUser(id: ID!): User
 
-  createProduct(
-    name: String!
-    discription: String
-    price: Float!
-  ): Product
+  createProduct(name: String!, discription: String, price: Float!): Product
 
   updateProduct(
     id: ID!

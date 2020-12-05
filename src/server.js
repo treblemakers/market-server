@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 
+import getUser from "./utils/getUser";
+
 import { ApolloServer } from "apollo-server-express";
 // import { typeDefs, resolvers } from "./schema";
 
@@ -14,6 +16,16 @@ const typeDefs = fs
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+
+  context: ({ req }) => {
+    // Check token from headers
+    const token = req.headers.authorization || "";
+
+    // Extract userId from token
+    const userId = getUser(token);
+
+    return { userId };
+  },
 });
 
 export default server;

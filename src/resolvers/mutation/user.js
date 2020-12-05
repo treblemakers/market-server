@@ -1,8 +1,38 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken"
 
 import User from "../../models/user";
 
 const mutation = {
+  login: async (parent, args, context, info) => {
+    const { username, password } = args;
+
+    // Find user in database
+    const user = await User.findOne({ username })
+      .populate({
+        path: "products",
+        populate: { path: "user" },
+      })
+
+    if (!user) throw new Error("Username not found, please sign up.");
+
+    // Validate password
+    if (password.trim().length < 6) {
+      throw new Error("Password must be at least 6 characters.");
+    }
+
+    // Check if password is correct
+    const validPassword = await bcrypt.compare(password, user.password);
+
+    if (!validPassword) throw new Error("Invalid email or password.");
+
+    const token = jwt.sign({ userId: user.id }, process.env.SECRET, {
+      expiresIn: "7days",
+    });
+
+    return { user, jwt: token };
+  },
+
   signup: async (parent, args, context, info) => {
     //username ไม่ควรนับ เว้นวรรค
     const username = args.username.trim();
