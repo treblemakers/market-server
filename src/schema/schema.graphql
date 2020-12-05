@@ -4,12 +4,25 @@ type User {
   username: String!
   password: String!
   email: String!
+
+  products: [Product] #<--- This is relationship
+}
+
+type Product {
+  id: ID!
+  name: String!
+  discription: String
+  price: Float!
+
+  user: User! #<--- This is relationship
 }
 
 type Query {
   user(id: ID!): User
   users: [User]!
   user_name(name: String!): User
+
+  products:[Product]!
 }
 
 type Mutation {
@@ -20,13 +33,22 @@ type Mutation {
     email: String!
   ): User
 
-  updateUser(
-    id:ID!
+  updateUser(id: ID!, name: String, password: String, email: String): User
+
+  deleteUser(id: ID!): User
+
+  createProduct(
+    name: String!
+    discription: String
+    price: Float!
+  ): Product
+
+  updateProduct(
+    id: ID!
     name: String
-    password: String
-    email: String
-  ): User
+    discription: String
+    price: Float
+  ): Product
 
-  deleteUser(id:ID!):User
-
+  deleteProduct(id: ID!): Product
 }
